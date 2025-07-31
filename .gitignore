@@ -1,0 +1,50 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dist/
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pkl
+*.sqlite3
+*.env
+venv/
+env/
+
+# VSCode
+.vscode/
+
+# MacOS
+.DS_Store
+
+# React or frontend build
+build/
+.cache/
+.next/
+out/
+
+# Logs
+logs/
+*.log
+
+# Coverage
+coverage/
+*.lcov
+
+# dotenv files
+*.env
+*.env.*
+
+# OS-specific
+Thumbs.db
+ehthumbs.db
+
+# Others
+.idea/
+*.swp
