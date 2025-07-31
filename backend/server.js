@@ -3,10 +3,7 @@ const cors = require('cors');
 const multer = require('multer');
 const pdfParse = require('pdf-parse');
 const fs = require('fs');
-require('dotenv').config();
-const { OpenAI } = require('openai');
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const axios = require('axios');
 
 
 const app = express();
@@ -32,7 +29,7 @@ app.post('/upload', upload.single('resume'), async (req, res) => {
   }
 });
 
-//**********************************   Implementing openai to analyse the user's resume and returns the results     //**********************************
+//**********************************   Implementing python ai to analyse the user's resume and returns the results     //**********************************
 
 app.post('/analyze', async (req, res) => {
     const { resumeText, jobDescription } = req.body;
@@ -42,34 +39,17 @@ app.post('/analyze', async (req, res) => {
     }
   
     try {
-      const prompt = `
-  You are an AI resume reviewer. Analyze the following resume against the job description.
-  Return:
-  1. ATS match score out of 100
-  2. Missing technical keywords
-  3. Suggestions for improvement
-  
-  Resume:
-  ${resumeText}
-  
-  Job Description:
-  ${jobDescription}
-      `;
-  
-      const response = await openai.chat.completions.create({
-        model:  "gpt-3.5-turbo",
-
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.5,
+      const response = await axios.post('http://127.0.0.1:6000/analyze', {
+        resumeText,
+        jobDescription
       });
   
-      const aiResponse = response.choices[0].message.content;
-      res.json({ analysis: aiResponse });
+      // Forward the AI microservice response to the frontend
+      res.json(response.data);
     } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'AI analysis failed' });
+      console.error('Python AI error:', err.message);
+      res.status(500).json({ error: 'Failed to analyze resume with AI service' });
     }
   });
-  
 
 app.listen(5500, () => console.log('Backend running on port 5500'));
